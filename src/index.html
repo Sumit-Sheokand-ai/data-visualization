@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Sales Dashboard | Interactive Data Visualization</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap">
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: 'Inter', sans-serif;
+      background: #f5f7fa;
+      color: #1c1c1e;
+    }
+
+    header {
+      background: linear-gradient(90deg, #007cf0, #00dfd8);
+      color: white;
+      padding: 2rem 1rem;
+      text-align: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+    }
+
+    header h1 {
+      margin: 0;
+      font-size: 2.5rem;
+    }
+
+    main {
+      max-width: 1100px;
+      margin: auto;
+      padding: 2rem 1rem;
+    }
+
+    .intro {
+      text-align: center;
+      margin-bottom: 2rem;
+    }
+
+    .intro p {
+      font-size: 1.15rem;
+      color: #555;
+    }
+
+    .buttons {
+      display: flex;
+      justify-content: center;
+      gap: 1rem;
+      margin: 1rem 0 3rem;
+      flex-wrap: wrap;
+    }
+
+    .buttons a {
+      background: #007cf0;
+      color: white;
+      text-decoration: none;
+      padding: 0.75rem 1.5rem;
+      border-radius: 6px;
+      transition: background 0.3s;
+    }
+
+    .buttons a:hover {
+      background: #005bb5;
+    }
+
+    .tech-stack {
+      text-align: center;
+      margin: 2rem 0;
+      font-size: 0.95rem;
+      color: #666;
+    }
+
+    .chart-section {
+      background: white;
+      padding: 2rem;
+      margin-bottom: 2rem;
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+    }
+
+    .chart-section h2 {
+      text-align: center;
+      margin-bottom: 1.5rem;
+      font-size: 1.4rem;
+      font-weight: 600;
+    }
+
+    canvas {
+      width: 100% !important;
+      max-height: 420px;
+    }
+
+    footer {
+      text-align: center;
+      padding: 2rem 1rem;
+      font-size: 0.9rem;
+      color: #777;
+    }
+
+    @media (max-width: 600px) {
+      header h1 {
+        font-size: 1.7rem;
+      }
+
+      .buttons a {
+        padding: 0.6rem 1.2rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>📊 Interactive Sales Dashboard</h1>
+  </header>
+
+  <main>
+    <section class="intro">
+      <p>
+        Welcome to the Sales Dashboard — a clean and responsive data visualization project built with HTML, CSS, Chart.js, and JSON. Analyze monthly sales trends and distribution in real-time.
+      </p>
+      <div class="buttons">
+        <a href="https://github.com/Sumit-Sheokand-ai/data-visualization" target="_blank">🔗 View Source Code</a>
+        <a href="https://sumit-sheokand-ai.github.io/data-visualization/" target="_blank">🚀 Run Demo</a>
+      </div>
+    </section>
+
+    <div class="tech-stack">
+      <strong>Tech Stack:</strong> HTML5, CSS3, Chart.js (CDN), JSON
+    </div>
+
+    <div class="chart-section">
+      <h2>Monthly Sales Overview</h2>
+      <canvas id="barChart"></canvas>
+    </div>
+
+    <div class="chart-section">
+      <h2>Sales Distribution (%)</h2>
+      <canvas id="pieChart"></canvas>
+    </div>
+  </main>
+
+  <footer>
+    &copy; 2025 Sumit Sheokand • Developed with ❤️ and JavaScript
+  </footer>
+
+  <script>
+    fetch('sales-data.json')
+      .then(response => response.json())
+      .then(json => {
+        const salesData = {
+          labels: json.labels,
+          datasets: [{
+            label: "Sales ($)",
+            backgroundColor: "rgba(0, 123, 255, 0.7)",
+            borderColor: "rgba(0, 123, 255, 1)",
+            borderWidth: 1,
+            data: json.data
+          }]
+        };
+
+        new Chart(document.getElementById('barChart'), {
+          type: 'bar',
+          data: salesData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { display: false },
+              tooltip: { enabled: true }
+            },
+            scales: {
+              y: { beginAtZero: true }
+            }
+          }
+        });
+
+        const total = json.data.reduce((a, b) => a + b, 0);
+        const pieData = {
+          labels: json.labels,
+          datasets: [{
+            label: "Sales %",
+            data: json.data.map(v => ((v / total) * 100).toFixed(2)),
+            backgroundColor: [
+              "#4e79a7", "#f28e2c", "#e15759",
+              "#76b7b2", "#59a14f", "#edc948"
+            ]
+          }]
+        };
+
+        new Chart(document.getElementById('pieChart'), {
+          type: 'pie',
+          data: pieData,
+          options: {
+            responsive: true,
+            plugins: {
+              legend: { position: 'bottom' }
+            }
+          }
+        });
+      })
+      .catch(err => console.error("Error loading data:", err));
+  </script>
+</body>
+</html>
